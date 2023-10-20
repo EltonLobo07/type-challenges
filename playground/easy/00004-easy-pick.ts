@@ -31,7 +31,12 @@
 
 /* _____________ Your Code Here _____________ */
 
-type MyPick<T, K> = any
+type MyPick<
+  TObj extends Record<string, any>,
+  TKey extends keyof TObj,
+> = {
+  [K in TKey]: TObj[K]
+}
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
