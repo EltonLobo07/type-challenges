@@ -31,7 +31,27 @@
 
 /* _____________ Your Code Here _____________ */
 
-type MyReadonly<T> = any
+/*
+  In the TS code:
+
+    type Readonly<T> = {
+        readonly [P in keyof T]: T[P];
+    }
+*/
+
+// Better version?
+type _MyReadonly<
+  TObj extends object,
+> = {
+  readonly [K in keyof TObj]: TObj[K]
+}
+
+type MyReadonly<
+  TObj extends object,
+> =
+  TObj extends (...args: any[]) => any
+    ? ((...args: Parameters<TObj>) => ReturnType<TObj>) & _MyReadonly<TObj>
+    : _MyReadonly<TObj>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
