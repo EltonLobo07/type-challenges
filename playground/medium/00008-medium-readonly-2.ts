@@ -33,8 +33,14 @@
 */
 
 /* _____________ Your Code Here _____________ */
-
-type MyReadonly2<T, K> = any
+type MyReadonly2<
+  TObj extends object,
+  TKey extends keyof TObj = keyof TObj,
+> =
+  Omit<TObj, TKey> &
+  {
+    readonly [K in TKey]: TObj[K]
+  }
 
 /* _____________ Test Cases _____________ */
 import type { Alike, Expect } from '@type-challenges/utils'
