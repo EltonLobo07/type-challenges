@@ -25,7 +25,12 @@
 
 /* _____________ Your Code Here _____________ */
 
-type MyReturnType<T> = any
+type MyReturnType<TArg> = TArg extends (...args: any[]) => infer TReturn ? TReturn : TArg
+/*
+    Important point:
+        If TArg is a union of types, the type helper is executed for each type in the union
+            Eg: MyReturnType<(() => void) | null> will be void | null
+*/
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
@@ -47,7 +52,7 @@ type ComplexObject = {
 }
 
 const fn = (v: boolean) => v ? 1 : 2
-const fn1 = (v: boolean, w: any) => v ? 1 : 2
+const fn1 = (v: boolean, _w: any) => v ? 1 : 2
 
 /* _____________ Further Steps _____________ */
 /*
