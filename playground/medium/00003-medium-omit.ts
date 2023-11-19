@@ -30,7 +30,12 @@
 
 /* _____________ Your Code Here _____________ */
 
-type MyOmit<T, K> = any
+type MyOmit<
+  TObj extends object,
+  TKey extends keyof TObj,
+> = {
+  [K in keyof TObj as K extends TKey ? never : K]: TObj[K]
+}
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
