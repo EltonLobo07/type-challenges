@@ -36,7 +36,11 @@
 
 /* _____________ Your Code Here _____________ */
 
-type DeepReadonly<T> = any
+type _DeepReadonly<T> = { readonly [K in keyof T]: DeepReadonly<T[K]> }
+
+type DeepReadonly<T> = T extends (...args: infer TParams) => infer TReturn
+  ? ((...args: TParams) => TReturn) // & _DeepReadonly<T>
+  : _DeepReadonly<T>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
