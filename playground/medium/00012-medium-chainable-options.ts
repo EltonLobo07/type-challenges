@@ -39,9 +39,17 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Chainable = {
-  option(key: string, value: any): any
-  get(): any
+type Chainable<
+  T extends Record<string, any> = { },
+> = {
+  option<
+    TKey extends string,
+    TValue,
+  >(
+    key: TKey extends keyof T ? never : TKey,
+    value: TValue
+  ): Chainable<Omit<T, TKey> & Record<TKey, TValue>>
+  get(): T
 }
 
 /* _____________ Test Cases _____________ */
