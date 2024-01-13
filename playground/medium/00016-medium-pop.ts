@@ -26,7 +26,25 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Pop<T extends any[]> = any
+type IsArray<T extends ReadonlyArray<any>> = -1 extends T['length'] ? true : false
+
+type Pop<T extends ReadonlyArray<any>> =
+  IsArray<T> extends true
+    ? T
+    : T extends [...infer TRest, any]
+      ? TRest
+      : []
+
+type Push<TArr extends ReadonlyArray<any>, TItem> = [...TArr, TItem]
+
+type Shift<T extends ReadonlyArray<any>> =
+  IsArray<T> extends true
+    ? T
+    : T extends [any, ...infer TRest]
+      ? TRest
+      : []
+
+type UnShift<TArr extends ReadonlyArray<any>, TItem> = [TItem, ...TArr]
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
