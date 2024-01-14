@@ -23,15 +23,48 @@
 
 /* _____________ Your Code Here _____________ */
 
-declare function PromiseAll(values: any): any
+/*
+============ My solution ============
+type IsArray<T extends ReadonlyArray<any>> = -1 extends T['length'] ? true : false
+
+type ArrayUnwrap<TArr extends ReadonlyArray<any>> = Awaited<TArr[number]>
+
+type TupleUnwrap<
+  TTup extends ReadonlyArray<any>,
+  THelper extends ReadonlyArray<any> = [],
+  TRes extends ReadonlyArray<any> = [],
+> =
+  THelper['length'] extends TTup['length']
+    ? TRes
+    : TupleUnwrap<TTup, [...THelper, unknown], [...TRes, Awaited<TTup[THelper['length']]>]>
+
+declare function PromiseAll<
+  TArrOrTup extends readonly [] | ReadonlyArray<any>,
+>(arr: TArrOrTup): Promise<IsArray<TArrOrTup> extends true ? Array<ArrayUnwrap<TArrOrTup>> : TupleUnwrap<TArrOrTup>>
+*/
+
+// ============ My solution (after looking at some of the solutions) ============
+declare function PromiseAll<TArrOrTup extends ReadonlyArray<unknown>>(arg: readonly [...TArrOrTup]): Promise<{ -readonly[K in keyof TArrOrTup]: Awaited<TArrOrTup[K]> }>
+
+/*
+  Why?
+    TArrOrTup extends ReadonlyArray<unknown>
+      To accept mutable and immutable arrays
+    [...TArrOrTup]
+      For PromiseAll([1, 2, 3]), TArrOrTup is inferred as Array<number> instead of [number, number, number]
+    readonly [...TArrOrTup]
+      To accept mutable and immutable tuples
+*/
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
 
+const res = PromiseAll([1, 2, 3] as readonly [number, number, number])
+
 const promiseAllTest1 = PromiseAll([1, 2, 3] as const)
 const promiseAllTest2 = PromiseAll([1, 2, Promise.resolve(3)] as const)
 const promiseAllTest3 = PromiseAll([1, 2, Promise.resolve(3)])
-const promiseAllTest4 = PromiseAll<Array<number | Promise<number>>>([1, 2, 3])
+const promiseAllTest4 = PromiseAll<ReadonlyArray<number | Promise<number>>>([1, 2, 3])
 
 type cases = [
   Expect<Equal<typeof promiseAllTest1, Promise<[1, 2, 3]>>>,
