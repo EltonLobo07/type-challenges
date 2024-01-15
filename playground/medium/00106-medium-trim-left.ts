@@ -18,10 +18,14 @@
 
 /* _____________ Your Code Here _____________ */
 
-type TrimLeft<S extends string> = any
+type Whitespace = ' ' | '\n' | '\t'
+
+type TrimLeft<S extends string> = S extends `${Whitespace}${infer SRest}` ? TrimLeft<SRest> : S
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
+
+type Res1 = TrimLeft<'   str'>
 
 type cases = [
   Expect<Equal<TrimLeft<'str'>, 'str'>>,
