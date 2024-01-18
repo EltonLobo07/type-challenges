@@ -12,7 +12,10 @@
 
 /* _____________ Your Code Here _____________ */
 
-type LengthOfString<S extends string> = any
+type LengthOfString<TStr extends string, TAcc extends Array<unknown> = []> =
+  TStr extends `${string}${infer TRest}`
+    ? LengthOfString<TRest, [...TAcc, unknown]>
+    : TAcc['length']
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
