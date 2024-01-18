@@ -16,10 +16,24 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Permutation<T> = any
+// My Solution
+// type Permutation<T> =
+//   [T] extends [never]
+//     ? []
+//     : { [K in T as string]: [K, ...Permutation<Exclude<T, K>> extends Array<any> ? Permutation<Exclude<T, K>> : []] }[string]
+
+// Better solution
+type Permutation<T, Acc = T> =
+  [T] extends [never]
+    ? []
+    : Acc extends T
+      ? [Acc, ...Permutation<Exclude<T, Acc>>]
+      : []
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
+
+type Test = Permutation<'A' | 'B' | 'C'>
 
 type cases = [
   Expect<Equal<Permutation<'A'>, ['A']>>,
