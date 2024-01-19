@@ -18,7 +18,25 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Flatten = any
+// My solution
+type MyFlatten<
+  TArr extends ReadonlyArray<any>,
+  TIdx extends ReadonlyArray<unknown> = [],
+  TRes extends ReadonlyArray<any> = [],
+> =
+  TIdx['length'] extends TArr['length']
+    ? TRes
+    : TArr[TIdx['length']] extends ReadonlyArray<any>
+      ? [...TRes, ...MyFlatten<TArr[TIdx['length']], [], []>, ...MyFlatten<TArr, [...TIdx, unknown], []>]
+      : MyFlatten<TArr, [...TIdx, unknown], [...TRes, TArr[TIdx['length']]]>
+
+// Best solution
+type Flatten<T extends ReadonlyArray<any>> =
+  T extends [infer THead, ...infer TTail]
+    ? THead extends ReadonlyArray<any>
+      ? [...Flatten<THead>, ...Flatten<TTail>]
+      : [THead, ...Flatten<TTail>]
+    : []
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
