@@ -19,7 +19,14 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Absolute<T extends number | string | bigint> = any
+type ToString<T extends number | string | bigint> = `${T}`
+
+type Absolute<T extends number | string | bigint> =
+  ToString<T> extends `-${infer TRes extends number | bigint}`
+    ? ToString<TRes>
+    : ToString<T> extends `${infer TRes extends number | bigint}`
+      ? ToString<TRes>
+      : never
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
