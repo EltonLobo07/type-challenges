@@ -19,7 +19,16 @@
 
 /* _____________ Your Code Here _____________ */
 
-type AppendToObject<T, U, V> = any
+// Does not work, check the "Related references" section to understand why
+type AppendToObjectTry1<T extends Record<PropertyKey, any>, U extends PropertyKey, V> = T & { [K in U]: V }
+
+type AppendToObject<T extends Record<PropertyKey, any>, U extends PropertyKey, V> = {
+  [K in (keyof T) | U]: K extends keyof T ? T[K] : V
+}
+
+// Hint why `AppendToObjectTry1` does not work
+type Result = AppendToObject<{ id: 1 }, 'id', 2> // Result type - {id: 1}
+type ResultTry1 = AppendToObjectTry1<{ id: 1 }, 'id', 3> // ResultTry1 type - never
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
