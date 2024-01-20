@@ -24,7 +24,21 @@
 
 /* _____________ Your Code Here _____________ */
 
-type KebabCase<S> = any
+type _KebabCase<S extends string> =
+  S extends `${infer TFirst}${infer TRest}`
+    ? TFirst extends Uppercase<TFirst>
+      ? TFirst extends Lowercase<TFirst>
+        ? `${TFirst}${_KebabCase<TRest>}`
+        : `-${Lowercase<TFirst>}${_KebabCase<TRest>}`
+      : `${TFirst}${_KebabCase<TRest>}`
+    : S
+
+type KebabCase<S extends string> =
+  S extends `${infer TFirst}${infer TRest}`
+    ? `${Lowercase<TFirst>}${_KebabCase<TRest>}`
+    : S
+
+type Res = KebabCase<'FooBarBaz'>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
