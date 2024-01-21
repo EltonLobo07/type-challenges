@@ -19,7 +19,20 @@
 
 /* _____________ Your Code Here _____________ */
 
-type AnyOf<T extends readonly any[]> = any
+type PyFalsy = '' | 0 | false | null | undefined | Record<any, never> | []
+
+// My solution
+type MyAnyOf<T extends readonly any[]> = [{
+  [K in keyof T]: T[K] extends PyFalsy ? never : true
+}[number]] extends [never] ? false : true
+
+// Best solution after checking many solutions
+type AnyOf<T extends ReadonlyArray<any>> =
+  T extends [infer THead, ...infer TTail]
+    ? THead extends PyFalsy
+      ? AnyOf<TTail>
+      : true
+    : false
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
