@@ -23,7 +23,15 @@
 
 /* _____________ Your Code Here _____________ */
 
-type IsNever<T> = any
+type IsNever<T> = [T] extends [never] ? true : false
+
+/*
+  type IsNever<T> = T extends never ? true : false
+    does not work, why?
+      I am using a conditional type and conditional types distribute over T's union members
+      But `never` is a union of nothing, there are no individual types to distribute over
+      because of which, the TS compiler does not bother executing the conditional logic and returns `never`
+*/
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
