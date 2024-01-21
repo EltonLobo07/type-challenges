@@ -20,7 +20,20 @@
 
 /* _____________ Your Code Here _____________ */
 
-type IsUnion<T> = any
+// My solution
+type MyIsUnion<T> = { [K in T as string]: Exclude<T, K> extends never ? false : true }[string]
+
+// The solution I liked
+type IsUnion<T, TCopy = T> =
+  [T] extends [never]
+    ? false
+    : T extends never
+      ? false
+      : [TCopy] extends [T]
+          ? false
+          : true
+
+type Test = IsUnion<never>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
