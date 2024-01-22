@@ -32,7 +32,33 @@
 
 /* _____________ Your Code Here _____________ */
 
-type PercentageParser<A extends string> = any
+type Sign = '+' | '-'
+type Unit = '%'
+
+// My solution
+type ProcessRest<T extends string> =
+  T extends `${number}`
+    ? [T, '']
+    : T extends `${infer TNum extends number}${Unit}`
+      ? T extends `${number}${infer TUnit extends Unit}`
+        ? [`${TNum}`, TUnit]
+        : [`${TNum}`, '']
+      : T extends `${infer TUnit extends Unit}`
+        ? ['', TUnit]
+        : ['', '']
+
+type MyPercentageParser<T extends string> =
+  T extends `${infer TFirst}${infer TRest}`
+    ? TFirst extends Sign
+      ? [TFirst, ...ProcessRest<TRest>]
+      : ['', ...ProcessRest<T>]
+    : ['', '', '']
+
+// The solution I liked
+type ParseSign<T extends string> = T extends `${infer TSign extends Sign}${string}` ? TSign : ''
+type ParseNumber<T extends string> = T extends `${ParseSign<T>}${infer TNum extends number}${ParseUnit<T>}` ? `${TNum}` : ''
+type ParseUnit<T extends string> = T extends `${string}${infer TUnit extends Unit}` ? TUnit : ''
+type PercentageParser<T extends string> = [ParseSign<T>, ParseNumber<T>, ParseUnit<T>]
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
@@ -49,6 +75,8 @@ type Case8 = ['-', '1', '']
 type Case9 = ['', '', '%']
 type Case10 = ['', '1', '']
 type Case11 = ['', '100', '']
+
+type Test = PercentageParser<'-1'>
 
 type cases = [
   Expect<Equal<PercentageParser<''>, Case0>>,
