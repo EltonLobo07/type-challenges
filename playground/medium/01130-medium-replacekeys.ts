@@ -45,7 +45,26 @@
 
 /* _____________ Your Code Here _____________ */
 
-type ReplaceKeys<U, T, Y> = any
+// My solution
+type MyReplaceKeys<
+  U extends Record<PropertyKey, any>,
+  T extends PropertyKey,
+  Y extends Record<PropertyKey, any>,
+> =
+  U extends Record<PropertyKey, any>
+    ? { [K in keyof U]: K extends T ? K extends keyof Y ? Y[K] : never : U[K] }
+    : never
+
+// Solution I liked
+type ReplaceKeys<
+  U extends Record<PropertyKey, any>,
+  T extends PropertyKey,
+  Y extends Record<PropertyKey, any>,
+> = { [K in keyof U]: K extends T ? K extends keyof Y ? Y[K] : never : U[K] }
+
+// Takeaway
+// Mapped types handle unions the same way a conditional type does (distributes)
+// I think its because this version of mapped type is homomorphic, so it forces the compiler to process unions one at a time?
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
@@ -101,6 +120,8 @@ type NoNameNodeC = {
 type Nodes = NodeA | NodeB | NodeC
 type ReplacedNodes = ReplacedNodeA | ReplacedNodeB | ReplacedNodeC
 type NodesNoName = NoNameNodeA | NoNameNodeC | NodeB
+
+type Test = ReplaceKeys<Nodes, 'name' | 'flag', { name: number; flag: string }>
 
 type cases = [
   Expect<Equal<ReplaceKeys<Nodes, 'name' | 'flag', { name: number; flag: string }>, ReplacedNodes>>,
