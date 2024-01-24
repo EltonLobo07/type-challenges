@@ -18,7 +18,25 @@
 
 /* _____________ Your Code Here _____________ */
 
-type DropChar<S, C> = any
+// My solution
+type MyDropChar<
+  S extends string,
+  C extends string,
+> =
+  S extends `${infer TFirst}${infer TRest}`
+    ? TFirst extends C
+      ? MyDropChar<TRest, C>
+      : `${TFirst}${MyDropChar<TRest, C>}`
+    : S
+
+// The solution I liked
+type DropChar<
+  S extends string,
+  C extends string,
+> =
+  S extends `${infer TLeft}${C}${infer TRight}`
+    ? `${TLeft}${DropChar<TRight, C>}`
+    : S
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
