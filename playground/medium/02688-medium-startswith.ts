@@ -20,7 +20,29 @@
 
 /* _____________ Your Code Here _____________ */
 
-type StartsWith<T extends string, U extends string> = any
+// My solution
+type GetFirstCh<T extends string> =
+  T extends `${infer TFirst}${string}`
+    ? TFirst
+    : never
+
+type GetChsAfterFirstCh<T extends string> =
+  T extends `${infer _TFirst}${infer TRest}`
+    ? TRest
+    : never
+
+type MyStartsWith<T extends string, U extends string> =
+  U extends ''
+    ? true
+    : GetFirstCh<U> extends GetFirstCh<T>
+      ? MyStartsWith<GetChsAfterFirstCh<T>, GetChsAfterFirstCh<U>>
+      : false
+
+// The solution I like
+type StartsWith<T extends string, U extends string> =
+  T extends `${U}${string}`
+    ? true
+    : false
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
