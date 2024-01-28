@@ -20,7 +20,17 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Flip<T> = any
+type Primitive =
+  | PropertyKey
+  | bigint
+  | null
+  | undefined
+  | boolean
+
+type ToObjKey<T extends Primitive> =
+  T extends PropertyKey ? T : `${Exclude<T, symbol>}`
+
+type Flip<T extends Record<PropertyKey, Primitive>> = { [K in keyof T as ToObjKey<T[K]>]: K }
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect, NotEqual } from '@type-challenges/utils'
