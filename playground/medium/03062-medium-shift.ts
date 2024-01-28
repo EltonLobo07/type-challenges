@@ -18,7 +18,10 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Shift<T> = any
+type Shift<T extends ReadonlyArray<any>> =
+  T extends [any, ...infer TRest]
+    ? TRest
+    : T
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
