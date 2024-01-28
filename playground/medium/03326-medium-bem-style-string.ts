@@ -16,7 +16,24 @@
 
 /* _____________ Your Code Here _____________ */
 
-type BEM<B extends string, E extends string[], M extends string[]> = any
+type AtLeastOne<T extends ReadonlyArray<any>> =
+  T extends [any, ...Array<any>]
+    ? true
+    : false
+
+type Prepend<
+  T extends ReadonlyArray<string>,
+  TPrepend extends string,
+> =
+  AtLeastOne<T> extends true
+    ? `${TPrepend}${T[number]}`
+    : ''
+
+type Modifier<T extends ReadonlyArray<string>> = Prepend<T, '--'>
+
+type Element<T extends ReadonlyArray<string>> = Prepend<T, '__'>
+
+type BEM<B extends string, E extends string[], M extends string[]> = `${B}${Element<E>}${Modifier<M>}`
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
