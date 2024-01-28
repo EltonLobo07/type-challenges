@@ -21,7 +21,23 @@
 
 /* _____________ Your Code Here _____________ */
 
-type FlattenDepth = any
+type _FlattenDepth<
+  TArr extends ReadonlyArray<any>,
+  TDepth extends number,
+  TCurDepth extends ReadonlyArray<unknown> = [],
+> =
+  TArr extends [infer TFirst, ...infer TRest]
+    ? TFirst extends ReadonlyArray<any>
+      ? TCurDepth['length'] extends TDepth
+        ? [TFirst, ..._FlattenDepth<TRest, TDepth, TCurDepth>]
+        : [..._FlattenDepth<TFirst, TDepth, [...TCurDepth, unknown]>, ..._FlattenDepth<TRest, TDepth, TCurDepth>]
+      : [TFirst, ..._FlattenDepth<TRest, TDepth, TCurDepth>]
+    : TArr
+
+type FlattenDepth<
+  TArr extends ReadonlyArray<any>,
+  TDepth extends number = 1,
+> = _FlattenDepth<TArr, TDepth>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
