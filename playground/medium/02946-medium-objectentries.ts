@@ -23,7 +23,40 @@
 
 /* _____________ Your Code Here _____________ */
 
-type ObjectEntries<T> = any
+type ValueToTuple<T> = { [K in keyof T]: [T[K]] }
+
+type RemoveUndefinedIfNotAlone<T> =
+  Exclude<T, undefined> extends never
+    ? T
+    : Exclude<T, undefined>
+
+type IsValueOptional<T> =
+  undefined extends T
+    ? true
+    : false
+
+type InternalObjectEntries<
+  T,
+  // Need `TTmp` so that I can test if a particular key is optional
+  TTmp = ValueToTuple<T>,
+> = {
+  [K in keyof T]-?:
+  // This is always true
+  K extends keyof TTmp
+    ? undefined extends TTmp[K]
+      // If control moves to the true branch, I know the key is optional
+      // Now, I just need to get rid of `undefined` if `undefined` is not the only type
+      ? [
+          K,
+          IsValueOptional<T[K]> extends true
+            ? RemoveUndefinedIfNotAlone<T[K]>
+            : T[K],
+        ]
+      : [K, T[K]]
+    : never
+}[keyof T]
+
+type ObjectEntries<T> = InternalObjectEntries<T>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
@@ -35,6 +68,8 @@ interface Model {
 }
 
 type ModelEntries = ['name', string] | ['age', number] | ['locations', string[] | null]
+
+type Test = ObjectEntries<Partial<Model>>
 
 type cases = [
   Expect<Equal<ObjectEntries<Model>, ModelEntries>>,
