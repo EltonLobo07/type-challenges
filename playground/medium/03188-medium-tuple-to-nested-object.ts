@@ -18,7 +18,13 @@
 
 /* _____________ Your Code Here _____________ */
 
-type TupleToNestedObject<T, U> = any
+type TupleToNestedObject<
+  T extends ReadonlyArray<string>,
+  U,
+> =
+  T extends [infer TFirst extends string, ...infer TRest extends Array<string>]
+    ? Record<TFirst, TupleToNestedObject<TRest, U>>
+    : U
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
