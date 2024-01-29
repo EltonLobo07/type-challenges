@@ -21,7 +21,36 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Fibonacci<T extends number> = any
+type _ToLength<T extends number, TCount extends ReadonlyArray<1> = []> =
+  TCount['length'] extends T
+    ? TCount
+    : _ToLength<T, [...TCount, 1]>
+
+type ToLength<T extends number> = _ToLength<T>
+
+type Add<TOp1 extends number, TOp2 extends number> =
+  [...ToLength<TOp1>, ...ToLength<TOp2>]['length']
+
+type _Fibonacci<
+  T extends number,
+  TCount extends ReadonlyArray<1> = [1],
+  TFirst extends number = 0,
+  TSecond extends number = 1,
+> =
+  TCount['length'] extends T
+    ? TSecond
+    : Add<TFirst, TSecond> extends number
+      ? _Fibonacci<T, [...TCount, 1], TSecond, Add<TFirst, TSecond>>
+      : never
+
+type Fibonacci<T extends number> =
+  number extends T
+    ? number
+    : 0 extends T
+      ? 1
+      : `${T}` extends `-${number}`
+        ? 1
+        : _Fibonacci<T>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
