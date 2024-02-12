@@ -20,7 +20,19 @@
 
 /* _____________ Your Code Here _____________ */
 
-type IsTuple<T> = any
+type IsNever<T> = [T] extends [never] ? true : false
+type IsAny<T> = 1 extends T & 0 ? true : false
+/*
+  type Test1 = any & 0 // any
+  type Test2 = never & 0 // never
+  type Test3 = unknown & 0 // 0
+*/
+type IsTuple<T> =
+  true extends IsAny<T> | IsNever<T>
+    ? false
+    : T extends readonly [unknown, ...Array<unknown>] | readonly []
+      ? true
+      : false
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
@@ -32,6 +44,7 @@ type cases = [
   Expect<Equal<IsTuple<{ length: 1 }>, false>>,
   Expect<Equal<IsTuple<number[]>, false>>,
   Expect<Equal<IsTuple<never>, false>>,
+  Expect<Equal<IsTuple<any>, false>>,
 ]
 
 /* _____________ Further Steps _____________ */
