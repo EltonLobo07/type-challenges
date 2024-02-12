@@ -19,7 +19,34 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Chunk = any
+type IsEmptyTuple<T extends ReadonlyArray<unknown>> =
+  T extends readonly []
+    ? true
+    : false
+
+type Append<
+  Input extends ReadonlyArray<unknown>,
+  Value,
+> = [...Input, Value]
+
+type _Chunk<
+  Input extends ReadonlyArray<unknown>,
+  Limit extends number,
+  Chunks extends Array<unknown> = [],
+  Chunk extends Array<unknown> = [],
+> =
+  Input extends readonly [infer First, ...infer Rest]
+    ? Chunk['length'] extends Limit
+      ? _Chunk<Rest, Limit, Append<Chunks, Chunk>, [First]>
+      : _Chunk<Rest, Limit, Chunks, Append<Chunk, First>>
+    : IsEmptyTuple<Chunk> extends true
+      ? Chunks
+      : Append<Chunks, Chunk>
+
+type Chunk<
+  Input extends ReadonlyArray<unknown>,
+  Limit extends number,
+> = _Chunk<Input, Limit>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
