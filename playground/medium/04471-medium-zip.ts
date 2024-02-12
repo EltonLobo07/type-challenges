@@ -15,7 +15,20 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Zip<T, U> = any
+type _Zip<
+  T extends ReadonlyArray<any>,
+  U extends ReadonlyArray<any>,
+  Res extends Array<any> = [],
+  ResLen extends number = Res['length'],
+> =
+  ResLen extends T['length'] | U['length']
+    ? Res
+    : _Zip<T, U, [...Res, [T[ResLen], U[ResLen]]]>
+
+type Zip<
+  T extends ReadonlyArray<any>,
+  U extends ReadonlyArray<any>,
+> = _Zip<T, U>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
