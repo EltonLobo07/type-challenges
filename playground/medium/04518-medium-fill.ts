@@ -19,12 +19,27 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Fill<
-  T extends unknown[],
-  N,
+type _Fill<
+  Arr extends ReadonlyArray<unknown>,
+  Val,
   Start extends number = 0,
-  End extends number = T['length'],
-> = any
+  End extends number = Arr['length'],
+  Res extends ReadonlyArray<unknown> = [],
+> =
+  Arr extends [infer Head, ...infer Tail]
+    ? Res['length'] extends Start
+      ? Start extends End
+        ? _Fill<Tail, Val, Start, End, [...Res, Head]>
+        : _Fill<Tail, Val, [...Res, Val]['length'], End, [...Res, Val]>
+      : _Fill<Tail, Val, Start, End, [...Res, Head]>
+    : Res
+
+type Fill<
+  Arr extends ReadonlyArray<unknown>,
+  Val,
+  Start extends number = 0,
+  End extends number = Arr['length'],
+> = _Fill<Arr, Val, Start, End>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
