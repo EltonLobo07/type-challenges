@@ -18,7 +18,31 @@
 
 /* _____________ Your Code Here _____________ */
 
-type IndexOf<T, U> = any
+type MyEqual<
+  Op1,
+  Op2,
+> =
+  (<T>() => T extends Op1 ? 1 : 2) extends
+  (<T>() => T extends Op2 ? 1 : 2)
+    ? true
+    : false
+
+type _IndexOf<
+  T extends ReadonlyArray<unknown>,
+  U,
+  Count extends Array<1> = [],
+  CountLen extends number = Count['length'],
+> =
+  CountLen extends T['length']
+    ? -1
+    : MyEqual<U, T[CountLen]> extends true
+      ? CountLen
+      : _IndexOf<T, U, [...Count, 1]>
+
+type IndexOf<
+  T extends ReadonlyArray<unknown>,
+  U,
+> = _IndexOf<T, U>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
