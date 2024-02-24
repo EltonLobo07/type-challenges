@@ -18,7 +18,21 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Without<T, U> = any
+type _Without<
+  T extends ReadonlyArray<number>,
+  Exclude extends number,
+  Res extends ReadonlyArray<number> = [],
+> =
+  T extends [infer First extends number, ...infer Rest extends Array<number>]
+    ? First extends Exclude
+      ? _Without<Rest, Exclude, Res>
+      : _Without<Rest, Exclude, [...Res, First]>
+    : Res
+
+type Without<
+  T extends ReadonlyArray<number>,
+  U extends number | ReadonlyArray<number>,
+> = _Without<T, (U extends number ? [U] : U)[number]>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
