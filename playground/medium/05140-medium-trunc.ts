@@ -18,7 +18,32 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Trunc = any
+type ToString<T extends number | string> = `${T}`
+
+type IsNum<T extends string> =
+  T extends `${number}`
+    ? true
+    : false
+
+type ZeroIfEmptyElseIdentity<T extends string> =
+  T extends ''
+    ? '0'
+    : T
+
+type _Trunc<
+  T extends string,
+  Res extends string = '',
+> =
+  T extends `${infer First}${infer Rest}`
+    ? First extends '.'
+      ? ZeroIfEmptyElseIdentity<Res>
+      : _Trunc<Rest, `${Res}${First}`>
+    : ZeroIfEmptyElseIdentity<Res>
+
+type Trunc<T extends number | string> =
+  IsNum<ToString<T>> extends false
+    ? never
+    : _Trunc<ToString<T>>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
