@@ -19,7 +19,39 @@
 
 /* _____________ Your Code Here _____________ */
 
-type LastIndexOf<T, U> = any
+type _LastIndexOf<
+  T extends ReadonlyArray<unknown>,
+  U,
+  Res extends number = -1,
+  Count extends ReadonlyArray<1> = [],
+  CountLen extends number = Count['length'],
+> =
+  CountLen extends T['length']
+    ? Res
+    : _LastIndexOf<
+      T,
+      U,
+      Equal<T[CountLen], U> extends true
+        ? CountLen
+        : Res,
+      [...Count, 1]
+    >
+
+// type LastIndexOf<
+//   T extends ReadonlyArray<unknown>,
+//   U,
+// > = _LastIndexOf<T, U>
+
+// Smart solution
+type LastIndexOf<
+  T extends ReadonlyArray<unknown>,
+  U,
+> =
+  T extends [...infer Rest, infer Last]
+    ? Equal<Last, U> extends true
+      ? Rest['length']
+      : LastIndexOf<Rest, U>
+    : -1
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
