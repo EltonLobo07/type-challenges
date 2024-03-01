@@ -20,7 +20,38 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Unique<T> = any
+type InTuple<
+  T extends ReadonlyArray<unknown>,
+  U,
+> =
+  T extends [infer First, ...infer Rest]
+    ? Equal<First, U> extends true
+      ? true
+      : InTuple<Rest, U>
+    : false
+
+type _Unique<
+  T extends ReadonlyArray<unknown>,
+  Res extends ReadonlyArray<unknown> = [],
+> =
+  T extends [infer First, ...infer Rest]
+    ? _Unique<
+        Rest,
+        InTuple<Res, First> extends true ? Res : [...Res, First]
+      >
+    : Res
+
+// type Unique<T extends ReadonlyArray<unknown>> = _Unique<T>
+
+// Smart solution
+type Unique<
+  T extends ReadonlyArray<unknown>,
+> =
+  T extends [...infer Rest, infer Last]
+    ? InTuple<Rest, Last> extends true
+      ? Unique<Rest>
+      : [...Unique<Rest>, Last]
+    : []
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
