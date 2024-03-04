@@ -16,7 +16,54 @@
 
 /* _____________ Your Code Here _____________ */
 
-type NumberRange<L, H> = any
+type ToString<T extends number> = `${T}`
+
+type ToNum<T extends string> = T extends `${infer Num extends number}` ? Num : never
+
+type Reverse<T extends string> =
+  T extends `${infer First}${infer Rest}`
+    ? `${Reverse<Rest>}${First}`
+    : T
+
+type AddOneMp = {
+  '0': '1'
+  '1': '2'
+  '2': '3'
+  '3': '4'
+  '4': '5'
+  '5': '6'
+  '6': '7'
+  '7': '8'
+  '8': '9'
+  '9': '0'
+}
+
+type _AddOne<
+  T extends string,
+  Carry extends string = '0',
+> =
+  T extends `${infer First extends keyof AddOneMp}${infer Rest}`
+    ? `${AddOneMp[First]}${First extends '9' ? _AddOne<Rest, '1'> : Rest}`
+    : Carry extends '0'
+      ? ''
+      : '1'
+
+// Assume `T` is always a positive number
+type AddOne<T extends number> = ToNum<Reverse<_AddOne<Reverse<ToString<T>>>>>
+
+type _NumberRange<
+  L extends number,
+  R extends number,
+  Acc extends number = never,
+> =
+  L extends R
+    ? Acc | L
+    : _NumberRange<AddOne<L>, R, Acc | L>
+
+type NumberRange<
+  L extends number,
+  R extends number,
+> = _NumberRange<L, R>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
