@@ -18,7 +18,16 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Combination<T extends string[]> = any
+type _Combination<
+  T extends ReadonlyArray<string>,
+  U extends string = T[number],
+  Acc extends string = U,
+> =
+  Acc extends string
+    ? Acc | `${Acc} ${_Combination<never, Exclude<U, Acc>>}`
+    : never
+
+type Combination<T extends ReadonlyArray<string>> = _Combination<T>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
