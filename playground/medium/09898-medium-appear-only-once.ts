@@ -12,7 +12,32 @@
 
 /* _____________ Your Code Here _____________ */
 
-type FindEles<T extends any[]> = any
+type Or<
+  Op1 extends boolean,
+  Op2 extends boolean,
+> =
+  Op1 extends true
+    ? true
+    : Op2
+
+type Extends<
+  Sub,
+  Super,
+> =
+  Sub extends Super
+    ? true
+    : false
+
+type _FindEles<
+  T extends ReadonlyArray<any>,
+  Res extends Array<any> = [],
+  Seen = never,
+> =
+  T extends [...infer Rest, infer Last]
+    ? _FindEles<Rest, Or<Extends<Last, Seen>, Extends<Last, Rest[number]>> extends true ? Res : [Last, ...Res], Seen | Last>
+    : Res
+
+type FindEles<T extends ReadonlyArray<any>> = _FindEles<T>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
