@@ -12,7 +12,14 @@
 
 /* _____________ Your Code Here _____________ */
 
-type Integer<T> = any
+type Integer<T extends number> =
+  number extends T
+    ? never
+    : `${T}` extends `${infer TInt extends number}.${infer TDecimal extends number}`
+      ? 0 extends TDecimal
+        ? TInt
+        : never
+      : T
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
