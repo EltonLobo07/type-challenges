@@ -22,7 +22,21 @@
 
 /* _____________ Your Code Here _____________ */
 
-type All = any
+type Eq<TLeft, TRight> = Equal<TLeft, TRight> extends true ? true : false
+
+type _All<TArr extends ReadonlyArray<unknown>, TMatch, TIdx extends ReadonlyArray<0>> =
+  TArr['length'] extends TIdx['length']
+    ? true
+    : Eq<TArr[TIdx['length']], TMatch> extends true
+      ? _All<TArr, TMatch, [...TIdx, 0]>
+      : false
+
+type All<TArr extends ReadonlyArray<unknown>, TMatch> =
+  number extends TArr['length']
+    ? Eq<TArr[number], TMatch> extends true
+      ? true
+      : false
+    : _All<TArr, TMatch, []>
 
 /* _____________ Test Cases _____________ */
 import type { Equal, Expect } from '@type-challenges/utils'
